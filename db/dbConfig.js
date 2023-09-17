@@ -18,3 +18,4 @@ exports.connectToDB = () => {
     })
     // return console.log("DB Connected Test")
 }
+
