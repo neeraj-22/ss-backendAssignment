@@ -1,20 +1,63 @@
-[
-    {
-        "firstName": "Rack",
-        "lastName": "Jackon",
-        "gender": "Man",
-        "age": 24
-    },
-    {
-        "firstName": "John",
-        "lastName": "Doe",
-        "gender": "Man",
-        "age": 45
-    },
-    {
-        "firstName": "Jane",
-        "lastName": "Doe",
-        "gender": "Woman",
-        "age": 20
-    }
-]
+{
+    "table_name": "Employees",
+    "columns": [
+      {
+        "name": "EmployeeID",
+        "data_type": "INT"
+      },
+      {
+        "name": "FirstName",
+        "data_type": "VARCHAR(50)"
+      },
+      {
+        "name": "LastName",
+        "data_type": "VARCHAR(50)"
+      },
+      {
+        "name": "Email",
+        "data_type": "VARCHAR(100)"
+      },
+      {
+        "name": "Age",
+        "data_type": "INT"
+      }
+    ],
+    "data": [
+      {
+        "EmployeeID": 1,
+        "FirstName": "John",
+        "LastName": "Doe",
+        "Age": 30,
+        "Email": "john.doe@example.com"
+      },
+      {
+        "EmployeeID": 2,
+        "FirstName": "Jane",
+        "LastName": "Smith",
+        "Age": 25,
+        "Email": "jane.smith@example.com"
+      },
+      {
+        "EmployeeID": 3,
+        "FirstName": "Bob",
+        "LastName": "Johnson",
+        "Age": 35,
+        "Email": "bob.johnson@example.com"
+      },
+      {
+        "EmployeeID": 4,
+        "FirstName": "Alice",
+        "LastName": "Brown",
+        "Age": 28,
+        "Email": "alice.brown@example.com"
+      },
+      {
+        "EmployeeID": 5,
+        "FirstName": "David",
+        "LastName": "Lee",
+        "Age": 32,
+        "Email": "david.lee@example.com"
+      }
+    ]
+  }
+  
