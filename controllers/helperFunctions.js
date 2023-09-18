@@ -23,7 +23,35 @@ exports.createSchema = catchAsyncErrors(async (json, req, res) => {
     var insertValuesQueryStatement = `INSERT INTO ${json.table_name} (${json.columns.map((e) => `${e.name}`).join(', ')}) VALUES ${json.data.map((e) => Object.values(e))`;
   */
 
-  return console.log("Hello");
+
+  var createTableQueryStatement = `CREATE TABLE ${json.table_name} (${json.columns.map((e) => `${e.name} ${e.data_type}`).join(', ')})`;
+
+  var columns = json.columns.map(e => e.name).join(', ');
+
+  var insertValues = json.data.map(e => {
+    const value = Object.values(e).map(val => (typeof val === 'string' ? `'${val}'` : val));
+    return `(${value.join(', ')})`;
+  }).join(', ');
+
+  var insertValuesQueryStatement = `INSERT INTO ${'employeebs'} (${columns}) VALUES ${insertValues};`
+
+  sqlInstance.query(createTableQueryStatement, (err, rows, fields) => {
+    if (!err) {
+      sqlInstance.query(insertValuesQueryStatement, (err, rows, fields) => {
+        if (!err) {
+          return console.log("Values Inserted")
+        } else {
+          return console.log(err)
+        }
+      })
+      // return console.log("Fin")
+    } else {
+      return console.table(err)
+
+    }
+  })
+
+  // return console.log("Hello", insertValuesQueryStatement);
 
 })
 

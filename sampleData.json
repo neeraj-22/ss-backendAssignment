@@ -1,5 +1,5 @@
 {
-    "table_name": "Employees",
+    "table_name": "Employeebs",
     "columns": [
       {
         "name": "EmployeeID",
@@ -14,12 +14,12 @@
         "data_type": "VARCHAR(50)"
       },
       {
-        "name": "Email",
-        "data_type": "VARCHAR(100)"
-      },
-      {
         "name": "Age",
         "data_type": "INT"
+      },
+      {
+        "name": "Email",
+        "data_type": "VARCHAR(100)"
       }
     ],
     "data": [
