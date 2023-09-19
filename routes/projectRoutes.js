@@ -1,10 +1,11 @@
 const express = require("express");
 
-const { readCollection, getRowById, updateRowById, deleteRowById, createSchema, createSchemaOnRouteHit } = require("../controllers/projectController");
+const { readCollection, getRowById, updateRowById, deleteRowById, createSchema, createSchemaOnRouteHit, test } = require("../controllers/projectController");
 
 const router = express.Router();
 
 //test routes
+router.get("/test", test)
 router.post("/:collection", createSchemaOnRouteHit)
 
 //read

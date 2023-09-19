@@ -10,6 +10,25 @@ var sqlInstance = mysql.createConnection({
   database: 'testdb'
 })
 
+
+exports.test = catchAsyncErrors(async (req, res) => {
+  var queryStatement = `SHOW TABLES LIKE 'employebs';`;
+
+  sqlInstance.query(queryStatement, (err, rows, fields) => {
+    if (!err) {
+      return res.status(200).json({
+        success: true,
+        rows: rows.length
+      })
+    } else {
+      res.status(200).json({
+        success: false,
+        result: err
+      })
+    }
+  })
+})
+
 //Creates schema on server startup
 exports.createSchema = catchAsyncErrors(async (json, req, res) => {
 
@@ -24,39 +43,43 @@ exports.createSchema = catchAsyncErrors(async (json, req, res) => {
     var insertValuesQueryStatement = `INSERT INTO ${json.table_name} (${json.columns.map((e) => `${e.name}`).join(', ')}) VALUES ${json.data.map((e) => Object.values(e))`;
   */
 
-  // const doesTableExists = checkIfCollectionExists();
+  var queryStatement = `SHOW TABLES LIKE 'employeebs';`;
 
-  var createTableQueryStatement = `CREATE TABLE ${json.table_name} (${json.columns.map((e) => `${e.name} ${e.data_type}`).join(', ')})`;
+  sqlInstance.query(queryStatement, (err, rows, fields) => {
+    if (!err && rows.length > 0) {
+      return console.log("Table alr exists")
+    }
+    else {
 
-  var columns = json.columns.map(e => e.name).join(', ');
+      var createTableQueryStatement = `CREATE TABLE ${json.table_name} (${json.columns.map((e) => `${e.name} ${e.data_type}`).join(', ')})`;
 
-  var insertValues = json.data.map(e => {
-    const value = Object.values(e).map(val => (typeof val === 'string' ? `'${val}'` : val));
-    return `(${value.join(', ')})`;
-  }).join(', ');
+      var columns = json.columns.map(e => e.name).join(', ');
 
-  var insertValuesQueryStatement = `INSERT INTO ${'employeebs'} (${columns}) VALUES ${insertValues};`
+      var insertValues = json.data.map(e => {
+        const value = Object.values(e).map(val => (typeof val === 'string' ? `'${val}'` : val));
+        return `(${value.join(', ')})`;
+      }).join(', ');
 
-  sqlInstance.query(createTableQueryStatement, (err, rows, fields) => {
-    if (!err) {
-      sqlInstance.query(insertValuesQueryStatement, (err, rows, fields) => {
+      var insertValuesQueryStatement = `INSERT INTO ${'employeebs'} (${columns}) VALUES ${insertValues};`
+
+      sqlInstance.query(createTableQueryStatement, (err, rows, fields) => {
         if (!err) {
-          return console.log("Values Inserted")
+          sqlInstance.query(insertValuesQueryStatement, (err, rows, fields) => {
+            if (!err) {
+              return console.log("Values Inserted")
+            } else {
+              return console.log(err)
+            }
+          })
+          // return console.log("Fin")
         } else {
-          return console.log(err)
+          return console.table(err)
+
         }
       })
-      // return console.log("Fin")
-    } else {
-      return console.table(err)
 
     }
   })
-
-  // executeQuery(createTableQueryStatement);
-  // executeQuery(insertValuesQueryStatement);
-
-  // return console.log("Hello", insertValuesQueryStatement);
 
 })
 

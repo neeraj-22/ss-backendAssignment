@@ -32,7 +32,7 @@ exports.checkIfCollectionExists = catchAsyncErrors(async (queryStatement, req, r
     if (!err) {
       return res.status(200).json({
         success: true,
-        rows
+        rows : rows.length
       })
     } else {
       return res.status(200).json({
