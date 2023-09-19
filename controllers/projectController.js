@@ -1,188 +1,104 @@
-//Query Functions — Dirty Kitchen
-const mysql = require("mysql");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const { checkIfCollectionExists, executeQuery } = require("./helperFunctions");
+const { executeQuery, checkIfCollectionExists, ingestSchemaAndData } = require("./helperController");
 
-var sqlInstance = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'testdb'
-})
+const { createDBConnection } = require("../db/dbConfig");
 
+//Sample DB file import to ingest schema on every server startup
+const json = require("../sampleData.json");
 
-exports.test = catchAsyncErrors(async (req, res) => {
-  var queryStatement = `SHOW TABLES LIKE 'employebs';`;
+//Creates schema on server startup -- Helper Function
+exports.createSchema = catchAsyncErrors(async (json, collection, req, res) => {
 
-  sqlInstance.query(queryStatement, (err, rows, fields) => {
-    if (!err) {
-      return res.status(200).json({
-        success: true,
-        rows: rows.length
-      })
-    } else {
-      res.status(200).json({
-        success: false,
-        result: err
-      })
+  var queryStatement = `SHOW TABLES LIKE '${collection}';`;
+
+  var sqlInstance = createDBConnection();
+
+  var collectionAlreadyExists = await checkIfCollectionExists(sqlInstance, queryStatement);
+
+  if (collectionAlreadyExists) {
+    return console.log("Collection already exists");
+  } else {
+
+    var createTableQueryStatement = `CREATE TABLE ${collection} (${json.columns.map((e) => `${e.name} ${e.data_type}`).join(', ')})`;
+
+    var columns = json.columns.map(e => e.name).join(', ');
+
+    var insertValues = json.data.map(e => {
+      const value = Object.values(e).map(val => (typeof val === 'string' ? `'${val}'` : val));
+      return `(${value.join(', ')})`;
+    }).join(', ');
+
+    var insertValuesQueryStatement = `INSERT INTO ${collection} (${columns}) VALUES ${insertValues};`;
+
+    try {
+      await ingestSchemaAndData(createTableQueryStatement, insertValuesQueryStatement, req, res)
+      return console.log("Value inserted")
     }
-  })
-})
-
-//Creates schema on server startup
-exports.createSchema = catchAsyncErrors(async (json, req, res) => {
-
-  /*
-    ! First Check if table doesn't exist
-      ?Need a fetch tables from db function and match it with the json.table_name
-      ?If table exists then need to fetch column names and modify as with the json file
-      ?If data is present then only exec below functions
-        ?Insert Values function -- .map() function to create a query each time and put values.
-          ?A further optimization could be -- if there are no unique columns in json then put multiple values and run a single query
-    var createTableQueryStatement = `CREATE TABLE ${json.table_name} (${json.columns.map((e) => `${e.name} ${e.data_type}`).join(', ')})`;
-    var insertValuesQueryStatement = `INSERT INTO ${json.table_name} (${json.columns.map((e) => `${e.name}`).join(', ')}) VALUES ${json.data.map((e) => Object.values(e))`;
-  */
-
-  var queryStatement = `SHOW TABLES LIKE 'employeebs';`;
-
-  sqlInstance.query(queryStatement, (err, rows, fields) => {
-    if (!err && rows.length > 0) {
-      return console.log("Table alr exists")
+    catch (err) {
+      return console.table(err)
     }
-    else {
-
-      var createTableQueryStatement = `CREATE TABLE ${json.table_name} (${json.columns.map((e) => `${e.name} ${e.data_type}`).join(', ')})`;
-
-      var columns = json.columns.map(e => e.name).join(', ');
-
-      var insertValues = json.data.map(e => {
-        const value = Object.values(e).map(val => (typeof val === 'string' ? `'${val}'` : val));
-        return `(${value.join(', ')})`;
-      }).join(', ');
-
-      var insertValuesQueryStatement = `INSERT INTO ${'employeebs'} (${columns}) VALUES ${insertValues};`
-
-      sqlInstance.query(createTableQueryStatement, (err, rows, fields) => {
-        if (!err) {
-          sqlInstance.query(insertValuesQueryStatement, (err, rows, fields) => {
-            if (!err) {
-              return console.log("Values Inserted")
-            } else {
-              return console.log(err)
-            }
-          })
-          // return console.log("Fin")
-        } else {
-          return console.table(err)
-
-        }
-      })
-
-    }
-  })
+  }
 
 })
 
-//Creates schema on route hit
+//Creates schema on route hit -- POST -> /:collection
 exports.createSchemaOnRouteHit = catchAsyncErrors(async (req, res) => {
 
   const { collection } = req.params;
 
-  return console.log("Hello", collection);
+  return this.createSchema(json, collection, req, res)
 
 })
 
-//Returns all records of the table
+//Returns all records of the collection -- GET -> /read/:collection
 exports.readCollection = catchAsyncErrors(async (req, res) => {
 
   const { collection } = req.params;
 
   var queryStatement = `SELECT * FROM ${collection}`;
 
-  sqlInstance.query(queryStatement, (err, rows, fields) => {
-    if (!err) {
-      return res.status(200).json({
-        success: true,
-        rows
-      })
-    } else {
-      res.status(200).json({
-        success: false,
-        result: err
-      })
-    }
-  })
+  var sqlInstance = createDBConnection();
+
+  executeQuery(sqlInstance, queryStatement, req, res);
+
 })
 
-//Returns all a particular record of the table by their id
+//Returns all a particular record of the table by their id  -- GET -> /:collection/:id
 exports.getRowById = catchAsyncErrors(async (req, res) => {
 
   const { collection, id } = req.params;
+  const { searchAttribute } = req.body;
 
-  var queryStatement = `SELECT * FROM ${collection} WHERE EmpID = ${id}`;
+  var queryStatement = `SELECT * FROM ${collection} WHERE ${searchAttribute} = ${id}`;
 
-  sqlInstance.query(queryStatement, (err, rows, fields) => {
-    if (!err) {
-      return res.status(200).json({
-        success: true,
-        rows
-      })
-    } else {
-      res.status(200).json({
-        success: false,
-        result: err
-      })
-    }
-  })
+  var sqlInstance = createDBConnection();
+
+  executeQuery(sqlInstance, queryStatement, req, res);
+
 })
 
-//Updates the record of the table with user provided details by their id
+//Updates the record of the collection with user provided details by their id  -- POST -> /:collection/:id
 exports.updateRowById = catchAsyncErrors(async (req, res) => {
 
   const { collection, id } = req.params;
+  const { attrToUpdate, updatedValue, searchAttribute } = req.body;
 
-  /*
-    *Updating dynamically what user selects 
-    const { colName, updatedValue } = req.body; --> update Salary with colName and 999 with updatedValue
+  var queryStatement = `UPDATE ${collection} SET ${attrToUpdate} = ${updatedValue} WHERE ${searchAttribute} = ${id}`;
 
-    TODO:  Put a check if any column with colName exists and if the updatedValue matches its type
-  */
+  var sqlInstance = createDBConnection();
 
-  var queryStatement = `UPDATE ${collection} SET Salary = 999 WHERE EmpID = ${id}`;
-
-  sqlInstance.query(queryStatement, (err, rows, fields) => {
-    if (!err) {
-      return res.status(200).json({
-        success: true,
-        rows
-      })
-    } else {
-      res.status(200).json({
-        success: false,
-        result: err
-      })
-    }
-  })
+  executeQuery(sqlInstance, queryStatement, req, res);
 })
 
-//Deletes the record of the table by their id
+//Deletes the record of the table by their id -- DEL -> /:collection/:id
 exports.deleteRowById = catchAsyncErrors(async (req, res) => {
 
   const { collection, id } = req.params;
+  const { searchAttribute } = req.body;
 
-  var queryStatement = `DELETE FROM ${collection} WHERE EmpID = ${id}`;
+  var queryStatement = `DELETE FROM ${collection} WHERE ${searchAttribute} = ${id}`;
 
-  sqlInstance.query(queryStatement, (err, rows, fields) => {
-    if (!err) {
-      return res.status(200).json({
-        success: true,
-        rows
-      })
-    } else {
-      res.status(200).json({
-        success: false,
-        result: err
-      })
-    }
-  })
+  var sqlInstance = createDBConnection();
+
+  executeQuery(sqlInstance, queryStatement, req, res);
 })

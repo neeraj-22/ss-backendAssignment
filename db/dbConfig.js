@@ -1,13 +1,7 @@
 const mysql = require("mysql");
 
-var mySqlConnection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'testdb'
-})
-
 exports.connectToDB = () => {
+
     mySqlConnection.connect((err) => {
         if (!err) {
             return console.log('DB connected Successfully');
@@ -16,6 +10,31 @@ exports.connectToDB = () => {
             return console.log('DB connection failed');
         }
     })
-    // return console.log("DB Connected Test")
+    
+}
+
+exports.createDBConnection = () => {
+
+    var sqlInstance = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'testdb'
+    })
+
+    return sqlInstance;
+
+}
+
+exports.endDBConnection = (sqlInstance) => {
+    
+     sqlInstance.end((err) => {
+        if (err) {
+            console.error('Error closing MySQL connection:', err);
+            return;
+        }
+        console.log('MySQL connection closed');
+    });
+    
 }
 

@@ -1,5 +1,5 @@
 {
-    "table_name": "Employeebs",
+    "table_name": "Employees",
     "columns": [
       {
         "name": "EmployeeID",

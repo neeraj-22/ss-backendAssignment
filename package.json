@@ -6,12 +6,13 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "jest --coverage"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.5.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "mock-express-response": "^0.3.0",
     "nodemon": "^3.0.1"
   }
 }
