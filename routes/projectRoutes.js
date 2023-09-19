@@ -1,11 +1,10 @@
 const express = require("express");
-const {  } = require("../controllers/helperFunctions");
-const { reactTest, readCollection, getRowById, updateRowById, deleteRowById, createSchema, createSchemaOnRouteHit } = require("../controllers/projectController");
+
+const { readCollection, getRowById, updateRowById, deleteRowById, createSchema, createSchemaOnRouteHit } = require("../controllers/projectController");
 
 const router = express.Router();
 
 //test routes
-router.post("/test/:nameTest", reactTest)
 router.post("/:collection", createSchemaOnRouteHit)
 
 //read

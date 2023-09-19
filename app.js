@@ -10,7 +10,7 @@ const projectRoutes = require("./routes/projectRoutes.js");
 
 //Connecting to DB import function
 const { connectToDB } = require("./db/dbConfig.js");
-const { createSchema } = require("./controllers/helperFunctions");
+const { createSchema } = require("./controllers/projectController");
 
 //Sample DB file import to ingest schema on every server startup
 const jsonFile = require("./sampleData.json");
