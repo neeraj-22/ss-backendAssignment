@@ -20,3 +20,18 @@ describe('add function', () => {
     expect(findSum(0, -5)).toBe(-5);
   });
 });
+
+
+//Sample response
+// {
+//   "success": true,
+//   "rows": [
+//       {
+//           "EmployeeID": 2,
+//           "FirstName": "Jane",
+//           "LastName": "Smith",
+//           "Age": 25,
+//           "Email": "jane.smith@example.com"
+//       }
+//   ]
+// }
