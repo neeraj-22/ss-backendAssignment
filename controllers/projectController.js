@@ -1,5 +1,5 @@
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const { executeQuery, checkIfCollectionExists, ingestSchemaAndData } = require("./helperController");
+const { executeQuery, checkIfCollectionExists, ingestSchemaAndData, addOrModifyColumnsIfTableExists } = require("./helperController");
 
 const { createDBConnection } = require("../db/dbConfig");
 
@@ -16,6 +16,7 @@ exports.createSchema = catchAsyncErrors(async (json, collection, req, res) => {
   var collectionAlreadyExists = await checkIfCollectionExists(sqlInstance, queryStatement);
 
   if (collectionAlreadyExists) {
+    addOrModifyColumnsIfTableExists(json, collection);
     return console.log("Collection already exists");
   } else {
 
