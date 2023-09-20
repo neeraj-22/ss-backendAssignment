@@ -1,30 +1,45 @@
-## Problem Statement
-You’ve been asked to build a generic database proxy - a REST API for CRUD on a SQL database.
-Translate REST language into valid SQL statements using your API endpoint handlers, written in
-Javascript/Node. Use any server framework (Express, Koa) and SQL flavor (MySQL, Postgres) you
-like.
-You don’t know what the schema looks like, so your DB proxy should implement a system to
-ingest schema files (could be JSON, whatever you like) and build the DB schema based on that,
-on every server startup.
+# Node-DB Proxy 
 
-## Technical Requirements
-● Create, Read, Update, and Delete SQL statements should map to
-POST /:collection
-GET /:collection/:id
-POST /:collection/:id
-DELETE /:collection/:id
-● DB Proxy should check for the existence of the tables specified by your example schema
-and create/add columns if not detected.
-● Your DB can be a local SQLite instance or you may include a Dockerfile to define it.
-● This project should use Javascript and Node.js.
-● This project should include a README that addresses anything you may not have
-completed. It should also address what additional changes you might need to make if
-the application were intended to run in a concurrent environment. Any other comments
-or thoughts about the project are also welcome.
+#### <a href="https://neeraj-22.notion.site/Samespace-Backend-Assignment-58d3516157724a8a909c5abc80b19902?pvs=4" target="_blank">🔗 Case Study </a> : Node JS app with endpoints to ingest schema on server statup and CRUD ops on a SQL database.
 
-## Submission Requirement
-Share your completed project within 7 days. A link to a hosted git repository or tarball of the git
-repository of the finished project.
+<hr/>
 
-## Bonus Points
-Automated tests that ensure the business logic implemented is correct.
+## Problem Statment
+Build a generic database proxy - a REST API for CRUD on a SQL database.
+
+<h3>Constraints</h3>
+We don’t know what the schema looks like, so the DB proxy should ingest schema files and build the DB schema based on that on every server startup.
+
+## About the Project
+The nodejs project checks on the every requirement and is based on the MVC architecture and takes care of the error handling 
+<p><i><b>
+  MVC Architecture
+</b></i></p>
+
+<img width="1282" alt="Screenshot 2023-09-20 at 07 07 07" src="https://github.com/neeraj-22/node-timestamps/assets/64327599/ed5198bf-6886-4ef8-bc4b-cb50648f1c59">
+
+<hr/>
+
+<p><i><b>Routes as defined</b></i></p>
+
+
+<img width="1108" alt="Screenshot 2023-09-20 at 07 19 31" src="https://github.com/neeraj-22/node-timestamps/assets/64327599/0ca79263-e2e9-411d-b71c-3fe35cc8b7e0">
+
+<br/>
+
+<p><b>Checklist</b></p>
+
+| Technical Requirements | Implemented in Submission  |
+| :---:   |  :---: |
+| CRUD on defined routes |   ✅    |
+| Check for existence of tables |   ✅   |  
+| Local SQL instance |   ✅   |  
+| Based on Nodejs |   ✅   |
+| Bonus : Automated testing |   ❌   |
+
+<br/>
+
+## Room for improvement
+> The application is up and working but there’s always a headroom for improvement. Further this could be improved by :
+1. Handling better ingestion of schemas — providing users with more flexibility in the json structure.
+2. Application could be made better for concurrent environments by emphasising more on connection pooling, writing asynchronous functions and focussing on bringing more modularity for tasks to stay parallel.
