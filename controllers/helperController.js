@@ -12,7 +12,7 @@ exports.executeQuery = (sqlInstance, queryStatement, req, res) => {
                 rows
             })
         } else {
-            return res.status(200).json({
+            return res.status(500).json({
                 success: false,
                 result: err
             })

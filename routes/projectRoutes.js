@@ -1,11 +1,10 @@
 const express = require("express");
 
-const { readCollection, getRowById, updateRowById, deleteRowById, createSchema, createSchemaOnRouteHit, test } = require("../controllers/projectController");
+const { readCollection, getRowById, updateRowById, deleteRowById, createSchemaOnRouteHit } = require("../controllers/projectController");
 
 const router = express.Router();
 
-//test routes
-// router.get("/test", test)
+//Create -- Ingest Schema route
 router.post("/:collection", createSchemaOnRouteHit)
 
 //read
@@ -19,8 +18,3 @@ router.post("/:collection/:id", updateRowById)
 router.delete("/:collection/:id", deleteRowById)
 
 module.exports = router;
-
-// POST /:collection
-// GET /:collection/:id
-// POST /:collection/:id
-// DELETE /:collection/:id
